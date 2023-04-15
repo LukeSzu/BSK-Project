@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="BSK.Views.ConnectView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BSK.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="640">
+    <Grid>
+        <TextBox x:Name="IPInput" Margin="112,127,134,259"></TextBox>
+        <Button x:Name="ConnectButton" Content="Connect" Margin="199,225,222,129" Click="ConnectButtonClick"/>
+        <Button x:Name="DisconnectButton" Margin="199,321,222,33" Content="Disconnect" Click="DisconnectButtonClick" IsEnabled="False"></Button>
+        <Button x:Name="AcceptButton" Margin="421,354,0,0" Click="AcceptButtonClick" Content="Not Accepting"></Button>
+    </Grid>
+</UserControl>
