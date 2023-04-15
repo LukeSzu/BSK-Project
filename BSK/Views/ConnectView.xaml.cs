@@ -192,8 +192,7 @@ namespace BSK.Views
                             Globals.Connected = false;
                             Globals.Listening = false;
                             AcceptButton.Content = "Not Accepting";
-                            ConnectButton.IsEnabled = true;
-                            DisconnectButton.IsEnabled = true;
+
                         });
                     }
                     
