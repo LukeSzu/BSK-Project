@@ -30,6 +30,33 @@ namespace BSK.Views
             Globals.acc = AcceptButton;
             Globals.con = ConnectButton;
             Globals.dsc = DisconnectButton;
+            if (Globals.Listening)
+            {
+                AcceptButton.Content = "Accepting";
+                ConnectButton.IsEnabled = false;
+                DisconnectButton.IsEnabled = false;
+            }
+            else
+            {
+                AcceptButton.Content = "Not Accepting";
+                if(Globals.client != null)
+                {
+                    string ip = Globals.client.Client.RemoteEndPoint.ToString();
+                    string pattern = @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
+
+                    IPInput.Text = Regex.Match(ip, pattern).Value;
+                    ConnectButton.IsEnabled = false;
+                    DisconnectButton.IsEnabled = true;
+                    AcceptButton.IsEnabled = false;
+                }
+                else
+                {
+                    ConnectButton.IsEnabled = true;
+                    DisconnectButton.IsEnabled = false;
+                    AcceptButton.IsEnabled = true;
+                }
+                
+            }
         }
 
         private void ConnectButtonClick(object sender, RoutedEventArgs e)
@@ -98,6 +125,7 @@ namespace BSK.Views
                 AcceptButton.Content = "Not Accepting";
                 ConnectButton.IsEnabled = true;
                 DisconnectButton.IsEnabled = true;
+                Globals.client = null;
             }
             else
             {
@@ -141,11 +169,16 @@ namespace BSK.Views
                     Globals.acc.IsEnabled = false;
                     Globals.con.IsEnabled = false;
                     Globals.dsc.IsEnabled = true;
+                    string ip = Globals.client.Client.RemoteEndPoint.ToString();
+                    string pattern = @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
+                    IPInput.Text = Regex.Match(ip, pattern).Value;
                 });
                 Globals.Connected = true;
                 Globals.Tester = new Thread(TestConnection);
                 Globals.tcpListener.Stop();
                 Globals.Tester.Start();
+                Globals.Listening = false;
+                
 
             }
             catch (SocketException ex)
@@ -172,8 +205,8 @@ namespace BSK.Views
                             Globals.con.IsEnabled = true;
                             Globals.dsc.IsEnabled = false;
                             Globals.Connected = false;
-                            Globals.Listening = false;
                             AcceptButton.Content = "Not Accepting";
+                            Globals.client = null;
                         });
                         
 
@@ -190,9 +223,8 @@ namespace BSK.Views
                             Globals.con.IsEnabled = true;
                             Globals.dsc.IsEnabled = false;
                             Globals.Connected = false;
-                            Globals.Listening = false;
                             AcceptButton.Content = "Not Accepting";
-
+                            Globals.client = null;
                         });
                     }
                     

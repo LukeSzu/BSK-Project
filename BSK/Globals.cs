@@ -22,5 +22,7 @@ namespace BSK
         public static Button acc { get; set; }
         public static Button dsc { get; set; }
         public static Button con { get; set; }
+
+
     }
 }

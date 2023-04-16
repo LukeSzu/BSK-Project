@@ -63,5 +63,15 @@ namespace BSK
                 if (Globals.Tester.IsAlive)
                     Globals.Tester.Join();
         }
+
+        private void Menu_Button_Messenger_Clicked(object sender, RoutedEventArgs e)
+        {
+            DataContext = new MessengerViewModel();
+        }
+
+        private void Menu_Button_Files_Clicked(object sender, RoutedEventArgs e)
+        {
+            DataContext = new FilesViewModel();
+        }
     }
 }

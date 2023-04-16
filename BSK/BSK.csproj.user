@@ -10,12 +10,24 @@
     <Compile Update="Views\ConnectView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\FilesView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\MessengerView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="MainWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\ConnectView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\FilesView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MessengerView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

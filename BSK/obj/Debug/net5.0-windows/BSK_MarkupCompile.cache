@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET5_0;NETCOREAPP
 C:\Users\Lukas\source\repos\BSK\BSK\App.xaml
-21586062120
+41628724008
 
-61869662920
+101439931750
 193-1891726104
-MainWindow.xaml;Views\ConnectView.xaml;
+MainWindow.xaml;Views\ConnectView.xaml;Views\FilesView.xaml;Views\MessengerView.xaml;
 
 False
 

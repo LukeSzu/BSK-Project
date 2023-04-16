@@ -12,6 +12,12 @@
         <DataTemplate x:Name="ConnectViewTemplate" DataType="{x:Type viewmodels:ConnectViewModel}">
             <views:ConnectView DataContext="{Binding}"/>
         </DataTemplate>
+        <DataTemplate x:Name="MessengerViewTemplate" DataType="{x:Type viewmodels:MessengerViewModel}">
+            <views:MessengerView DataContext="{Binding}"/>
+        </DataTemplate>
+        <DataTemplate x:Name="FilesViewTemplate" DataType="{x:Type viewmodels:FilesViewModel}">
+            <views:FilesView DataContext="{Binding}"/>
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -33,6 +39,8 @@
         <DockPanel x:Name="dockPanel"  Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Grid.ColumnSpan="3" >
             <StackPanel>
                 <Button x:Name="MenuConnectButton" Content="Connect" Click="Menu_Button_Connect_Clicked" Height="87" ></Button>
+                <Button x:Name="MenuMessengerButton" Content="Messenger" Click="Menu_Button_Messenger_Clicked" Height="87" ></Button>
+                <Button x:Name="MenuFileButton" Content="Files" Click="Menu_Button_Files_Clicked" Height="87" ></Button>
             </StackPanel>
         </DockPanel>
 
