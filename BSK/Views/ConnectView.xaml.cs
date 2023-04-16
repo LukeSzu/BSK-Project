@@ -55,7 +55,6 @@ namespace BSK.Views
                     DisconnectButton.IsEnabled = false;
                     AcceptButton.IsEnabled = true;
                 }
-                
             }
         }
 
@@ -95,8 +94,7 @@ namespace BSK.Views
                 }
                 else
                 {
-                    IPInput.Text = "Bad ip";
-                    
+                    IPInput.Text = "Bad ip";  
                 }
             }
             else
@@ -142,11 +140,10 @@ namespace BSK.Views
                 Globals.tcpListener.Stop();
                 Globals.Listener.Join();
                 ConnectButton.IsEnabled = true;
-                DisconnectButton.IsEnabled = true;
+                DisconnectButton.IsEnabled = false;
             }
             else
             {
-
                 Globals.Listening = true;
                 AcceptButton.Content = "Accepting";
 
@@ -178,8 +175,6 @@ namespace BSK.Views
                 Globals.tcpListener.Stop();
                 Globals.Tester.Start();
                 Globals.Listening = false;
-                
-
             }
             catch (SocketException ex)
             {
@@ -205,7 +200,10 @@ namespace BSK.Views
                             Globals.con.IsEnabled = true;
                             Globals.dsc.IsEnabled = false;
                             Globals.Connected = false;
+                            Globals.Listening = false;
                             AcceptButton.Content = "Not Accepting";
+                            Globals.client.GetStream().Dispose();
+                            Globals.client.Close();
                             Globals.client = null;
                         });
                         
@@ -223,7 +221,10 @@ namespace BSK.Views
                             Globals.con.IsEnabled = true;
                             Globals.dsc.IsEnabled = false;
                             Globals.Connected = false;
+                            Globals.Listening = false;
                             AcceptButton.Content = "Not Accepting";
+                            Globals.client.GetStream().Dispose();
+                            Globals.client.Close();
                             Globals.client = null;
                         });
                     }
