@@ -13,16 +13,17 @@ namespace BSK
     {
         public static bool Connected { get; set; }
         public static TcpListener tcpListener { get; set; }
-        public static TcpClient client { get; set; }
-        public static DockPanel dockPanel { get; set; }
+        public static TcpClient Client { get; set; }
+        public static DockPanel DockPanel { get; set; }
         public static Thread Listener { get; set; }
         public static Thread Tester { get; set; }
         public static bool Listening { get; set; }
 
-        public static Button acc { get; set; }
-        public static Button dsc { get; set; }
-        public static Button con { get; set; }
+        public static Button AcceptButton { get; set; }
+        public static Button DisconnectButton { get; set; }
+        public static Button ConnectButton { get; set; }
 
-
+        public static Button MessengerButton { get; set; }
+        public static Button FilesButton { get; set; }
     }
 }

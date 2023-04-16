@@ -29,12 +29,18 @@ namespace BSK
         {
             InitializeComponent();
             Globals.tcpListener = new TcpListener(System.Net.IPAddress.Any, 6938);
-            Globals.dockPanel = dockPanel;
+            Globals.DockPanel = dockPanel;
             Globals.Listening = false;
 
 
-            Globals.dockPanel.Background = new SolidColorBrush(Colors.Red);
+            Globals.DockPanel.Background = new SolidColorBrush(Colors.Red);
             Globals.Connected = false;
+
+            Globals.MessengerButton = MenuMessengerButton;
+            Globals.FilesButton = MenuFileButton;
+
+            Globals.FilesButton.IsEnabled = false;
+            Globals.MessengerButton.IsEnabled = false;
         }
         
 
@@ -47,10 +53,10 @@ namespace BSK
         {
             Globals.Connected = false;
 
-            if (Globals.client != null)
+            if (Globals.Client != null)
             {
-                Globals.client.GetStream().Dispose();
-                Globals.client.Close();
+                Globals.Client.GetStream().Dispose();
+                Globals.Client.Close();
             }
             if(Globals.Listening)
                 Globals.tcpListener.Stop();
@@ -72,6 +78,10 @@ namespace BSK
         private void Menu_Button_Files_Clicked(object sender, RoutedEventArgs e)
         {
             DataContext = new FilesViewModel();
+        }
+        private void Menu_Button_Unlock_Clicked(object sender, RoutedEventArgs e)
+        {
+            DataContext = new UnlockViewModel();
         }
     }
 }

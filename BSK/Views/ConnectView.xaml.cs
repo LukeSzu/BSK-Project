@@ -27,9 +27,9 @@ namespace BSK.Views
         public ConnectView()
         {
             InitializeComponent();
-            Globals.acc = AcceptButton;
-            Globals.con = ConnectButton;
-            Globals.dsc = DisconnectButton;
+            Globals.AcceptButton = AcceptButton;
+            Globals.ConnectButton = ConnectButton;
+            Globals.DisconnectButton = DisconnectButton;
             if (Globals.Listening)
             {
                 AcceptButton.Content = "Accepting";
@@ -39,9 +39,9 @@ namespace BSK.Views
             else
             {
                 AcceptButton.Content = "Not Accepting";
-                if(Globals.client != null)
+                if(Globals.Client != null)
                 {
-                    string ip = Globals.client.Client.RemoteEndPoint.ToString();
+                    string ip = Globals.Client.Client.RemoteEndPoint.ToString();
                     string pattern = @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
 
                     IPInput.Text = Regex.Match(ip, pattern).Value;
@@ -72,10 +72,10 @@ namespace BSK.Views
                         client.Connect(ip, 6938);
                         if (client.Connected)
                         {
-                            Globals.client = client;
+                            Globals.Client = client;
                             this.Dispatcher.Invoke(() =>
                             {
-                                Globals.dockPanel.Background = new SolidColorBrush(Colors.SeaGreen);
+                                Globals.DockPanel.Background = new SolidColorBrush(Colors.SeaGreen);
                             });
 
                             Globals.Tester = new Thread(TestConnection);
@@ -94,7 +94,7 @@ namespace BSK.Views
                 }
                 else
                 {
-                    IPInput.Text = "Bad ip";  
+                    IPInput.Text = "IP doesn't match regex policy";  
                 }
             }
             else
@@ -107,12 +107,12 @@ namespace BSK.Views
         {
             if (Globals.Connected)
             {
-                Globals.client.GetStream().Dispose();
-                Globals.client.Close();
+                Globals.Client.GetStream().Dispose();
+                Globals.Client.Close();
 
                 this.Dispatcher.Invoke(() =>
                 {
-                    Globals.dockPanel.Background = new SolidColorBrush(Colors.Red);
+                    Globals.DockPanel.Background = new SolidColorBrush(Colors.Red);
                 });
                 Globals.Connected = false;
                 AcceptButton.IsEnabled = true;
@@ -123,7 +123,7 @@ namespace BSK.Views
                 AcceptButton.Content = "Not Accepting";
                 ConnectButton.IsEnabled = true;
                 DisconnectButton.IsEnabled = true;
-                Globals.client = null;
+                Globals.Client = null;
             }
             else
             {
@@ -158,15 +158,15 @@ namespace BSK.Views
         {
             try
             {
-                Globals.client = Globals.tcpListener.AcceptTcpClient();
+                Globals.Client = Globals.tcpListener.AcceptTcpClient();
 
                 this.Dispatcher.Invoke(() =>
                 {
-                    Globals.dockPanel.Background = new SolidColorBrush(Colors.SeaGreen);
-                    Globals.acc.IsEnabled = false;
-                    Globals.con.IsEnabled = false;
-                    Globals.dsc.IsEnabled = true;
-                    string ip = Globals.client.Client.RemoteEndPoint.ToString();
+                    Globals.DockPanel.Background = new SolidColorBrush(Colors.SeaGreen);
+                    Globals.AcceptButton.IsEnabled = false;
+                    Globals.ConnectButton.IsEnabled = false;
+                    Globals.DisconnectButton.IsEnabled = true;
+                    string ip = Globals.Client.Client.RemoteEndPoint.ToString();
                     string pattern = @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
                     IPInput.Text = Regex.Match(ip, pattern).Value;
                 });
@@ -184,7 +184,7 @@ namespace BSK.Views
 
         private void TestConnection()
         {
-            Socket s = Globals.client.GetStream().Socket;
+            Socket s = Globals.Client.GetStream().Socket;
             while (Globals.Connected == true)
             {
                 try
@@ -195,16 +195,16 @@ namespace BSK.Views
                     {
                         this.Dispatcher.Invoke(() =>
                         {
-                            Globals.dockPanel.Background = new SolidColorBrush(Colors.Red);
-                            Globals.acc.IsEnabled = true;
-                            Globals.con.IsEnabled = true;
-                            Globals.dsc.IsEnabled = false;
+                            Globals.DockPanel.Background = new SolidColorBrush(Colors.Red);
+                            Globals.AcceptButton.IsEnabled = true;
+                            Globals.ConnectButton.IsEnabled = true;
+                            Globals.DisconnectButton.IsEnabled = false;
                             Globals.Connected = false;
                             Globals.Listening = false;
                             AcceptButton.Content = "Not Accepting";
-                            Globals.client.GetStream().Dispose();
-                            Globals.client.Close();
-                            Globals.client = null;
+                            Globals.Client.GetStream().Dispose();
+                            Globals.Client.Close();
+                            Globals.Client = null;
                         });
                         
 
@@ -216,16 +216,16 @@ namespace BSK.Views
                     {
                         this.Dispatcher.Invoke(() =>
                         {
-                            Globals.dockPanel.Background = new SolidColorBrush(Colors.Red);
-                            Globals.acc.IsEnabled = true;
-                            Globals.con.IsEnabled = true;
-                            Globals.dsc.IsEnabled = false;
+                            Globals.DockPanel.Background = new SolidColorBrush(Colors.Red);
+                            Globals.AcceptButton.IsEnabled = true;
+                            Globals.ConnectButton.IsEnabled = true;
+                            Globals.DisconnectButton.IsEnabled = false;
                             Globals.Connected = false;
                             Globals.Listening = false;
                             AcceptButton.Content = "Not Accepting";
-                            Globals.client.GetStream().Dispose();
-                            Globals.client.Close();
-                            Globals.client = null;
+                            Globals.Client.GetStream().Dispose();
+                            Globals.Client.Close();
+                            Globals.Client = null;
                         });
                     }
                     

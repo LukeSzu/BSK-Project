@@ -27,3 +27,5 @@ C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\Views\FilesView.g.c
 C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\Views\MessengerView.g.cs
 C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\Views\FilesView.baml
 C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\Views\MessengerView.baml
+C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\Views\UnlockView.g.cs
+C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\Views\UnlockView.baml
