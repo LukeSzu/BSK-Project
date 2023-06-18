@@ -15,6 +15,7 @@ namespace BSK
         public static bool Connected { get; set; }
         public static TcpListener tcpListener { get; set; }
         public static TcpClient Client { get; set; }
+        public static NetworkStream clientStream { get; set; }
         public static DockPanel DockPanel { get; set; }
         public static Thread Listener { get; set; }
         public static Thread Tester { get; set; }
@@ -31,5 +32,8 @@ namespace BSK
         public static Button FilesButton { get; set; }
 
         public static RSACryptoServiceProvider Rsa { get; set; }
+        public static RSACryptoServiceProvider Brsa { get; set; }
+
+        public static byte[] sessionKey { get; set; }
     }
 }

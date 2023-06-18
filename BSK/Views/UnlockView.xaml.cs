@@ -104,8 +104,6 @@ namespace BSK.Views
                             UsefulFunc.ExportPublicKey(rsa, file);
                         }
                     }
-                    Globals.FilesButton.IsEnabled = true;
-                    Globals.MessengerButton.IsEnabled = true;
                     Globals.ConnectMenuButton.IsEnabled = true;
                     Globals.UnlockButton.IsEnabled = false;
                     UnlockButton.IsEnabled = false;

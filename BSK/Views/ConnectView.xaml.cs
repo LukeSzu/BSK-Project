@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -73,6 +74,7 @@ namespace BSK.Views
                         if (client.Connected)
                         {
                             Globals.Client = client;
+                            Globals.clientStream = client.GetStream();
                             this.Dispatcher.Invoke(() =>
                             {
                                 Globals.DockPanel.Background = new SolidColorBrush(Colors.SeaGreen);
@@ -88,8 +90,20 @@ namespace BSK.Views
                             Globals.FilesButton.IsEnabled = true;
                             Globals.MessengerButton.IsEnabled = true;
 
-                            //TODO
-                            //wysłanie klucza publicznego
+                            //1
+                            //Wyslij klucz publiczny 
+                            var publicKeyXml = Globals.Rsa.ToXmlString(false);
+                            byte[] publicKeyBytes = System.Text.Encoding.ASCII.GetBytes(publicKeyXml);
+                            Globals.clientStream.Write(publicKeyBytes, 0, publicKeyBytes.Length);
+
+                            //4
+                            //Otrzymaj zaszyfrowany klucz sesji
+                            byte[] readBuffer = new byte[256];
+                            int numberOfBytesRead = 0;
+                            numberOfBytesRead = Globals.clientStream.Read(readBuffer, 0, readBuffer.Length);
+                            var sessionKey = Globals.Rsa.Decrypt(readBuffer, false);
+                            Globals.sessionKey = sessionKey;
+
                         }
                     }
                     catch(SocketException ex)
@@ -163,11 +177,30 @@ namespace BSK.Views
                 DisconnectButton.IsEnabled = false;
             }
         }
+        public static string GenerateToken()
+        {
+            int length = 16;
+            const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder res = new StringBuilder();
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                byte[] uintBuffer = new byte[sizeof(uint)];
+
+                while (length-- > 0)
+                {
+                    rng.GetBytes(uintBuffer);
+                    uint num = BitConverter.ToUInt32(uintBuffer, 0);
+                    res.Append(CHARS[(int)(num % (uint)CHARS.Length)]);
+                }
+                return res.ToString();
+            }
+        }
         public void ListenConnection()
         {
             try
             {
                 Globals.Client = Globals.tcpListener.AcceptTcpClient();
+                Globals.clientStream = Globals.Client.GetStream();
 
                 this.Dispatcher.Invoke(() =>
                 {
@@ -185,8 +218,23 @@ namespace BSK.Views
                 Globals.Tester.Start();
                 Globals.Listening = false;
 
-                //TODO
-                //odebranie klucza publicznego
+                Globals.Brsa = new RSACryptoServiceProvider(2048);
+                Globals.Brsa.PersistKeyInCsp = false;
+
+                //2
+                //Otrzymaj klucz publiczny i go ustaw
+                byte[] keybuffer = new byte[2048];
+                StringBuilder keyStringBuilder = new StringBuilder();
+                int nobytes = Globals.clientStream.Read(keybuffer, 0, keybuffer.Length);
+                keyStringBuilder.AppendFormat("{0}", Encoding.ASCII.GetString(keybuffer, 0, nobytes));
+                Globals.Brsa.FromXmlString(keyStringBuilder.ToString());
+
+                //3
+                //Wygeneruj klucz sesji i go wyslij
+                Globals.sessionKey = Convert.FromBase64String(GenerateToken());
+                byte[] message = Globals.sessionKey;
+                var encryptedData = Globals.Brsa.Encrypt(message, false);
+                Globals.clientStream.Write(encryptedData, 0, encryptedData.Length);
             }
             catch (SocketException ex)
             {
