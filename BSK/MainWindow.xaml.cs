@@ -38,7 +38,10 @@ namespace BSK
 
             Globals.MessengerButton = MenuMessengerButton;
             Globals.FilesButton = MenuFileButton;
+            Globals.ConnectMenuButton = MenuConnectButton;
+            Globals.UnlockButton = MenuUnlockButton;
 
+            Globals.ConnectMenuButton.IsEnabled = false;
             Globals.FilesButton.IsEnabled = false;
             Globals.MessengerButton.IsEnabled = false;
         }
@@ -83,5 +86,6 @@ namespace BSK
         {
             DataContext = new UnlockViewModel();
         }
+
     }
 }

@@ -29,3 +29,4 @@ C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\Views\FilesView.bam
 C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\Views\MessengerView.baml
 C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\Views\UnlockView.g.cs
 C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\Views\UnlockView.baml
+C:\Users\Lukas\source\repos\BSK\BSK\obj\Debug\net5.0-windows\BSK.csproj.AssemblyReference.cache

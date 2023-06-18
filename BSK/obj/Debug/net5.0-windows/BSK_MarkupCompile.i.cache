@@ -12,9 +12,9 @@ TRACE;DEBUG;NET;NET5_0;NETCOREAPP
 C:\Users\Lukas\source\repos\BSK\BSK\App.xaml
 5-1709701082
 
-14-791424409
+15-468469284
 193-1891726104
 MainWindow.xaml;Views\ConnectView.xaml;Views\FilesView.xaml;Views\MessengerView.xaml;Views\UnlockView.xaml;
 
-False
+True
 

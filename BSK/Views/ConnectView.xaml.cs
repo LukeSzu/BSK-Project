@@ -84,6 +84,12 @@ namespace BSK.Views
                             AcceptButton.IsEnabled = false;
                             ConnectButton.IsEnabled = false;
                             DisconnectButton.IsEnabled = true;
+
+                            Globals.FilesButton.IsEnabled = true;
+                            Globals.MessengerButton.IsEnabled = true;
+
+                            //TODO
+                            //wysłanie klucza publicznego
                         }
                     }
                     catch(SocketException ex)
@@ -124,6 +130,9 @@ namespace BSK.Views
                 ConnectButton.IsEnabled = true;
                 DisconnectButton.IsEnabled = true;
                 Globals.Client = null;
+
+                Globals.FilesButton.IsEnabled = false;
+                Globals.MessengerButton.IsEnabled = false;
             }
             else
             {
@@ -175,6 +184,9 @@ namespace BSK.Views
                 Globals.tcpListener.Stop();
                 Globals.Tester.Start();
                 Globals.Listening = false;
+
+                //TODO
+                //odebranie klucza publicznego
             }
             catch (SocketException ex)
             {
@@ -205,6 +217,9 @@ namespace BSK.Views
                             Globals.Client.GetStream().Dispose();
                             Globals.Client.Close();
                             Globals.Client = null;
+
+                            Globals.FilesButton.IsEnabled = false;
+                            Globals.MessengerButton.IsEnabled = false;
                         });
                         
 
@@ -226,6 +241,9 @@ namespace BSK.Views
                             Globals.Client.GetStream().Dispose();
                             Globals.Client.Close();
                             Globals.Client = null;
+
+                            Globals.FilesButton.IsEnabled = false;
+                            Globals.MessengerButton.IsEnabled = false;
                         });
                     }
                     

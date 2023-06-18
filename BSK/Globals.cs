@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +24,12 @@ namespace BSK
         public static Button DisconnectButton { get; set; }
         public static Button ConnectButton { get; set; }
 
+
+        public static Button UnlockButton { get; set; }
+        public static Button ConnectMenuButton { get; set; }
         public static Button MessengerButton { get; set; }
         public static Button FilesButton { get; set; }
+
+        public static RSACryptoServiceProvider Rsa { get; set; }
     }
 }
