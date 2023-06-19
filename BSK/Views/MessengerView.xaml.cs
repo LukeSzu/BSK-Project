@@ -34,7 +34,7 @@ namespace BSK.Views
         {
             try
             {
-                if (Globals.Connected)
+                if (Globals.Connected && MessageInput.Text != "")
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine("Text");
@@ -75,11 +75,14 @@ namespace BSK.Views
 
                         send(aes1, sb, Globals.clientStream);
                         sb.Clear();
+                        
                         sb.AppendLine(MessageInput.Text);
                         MessageInput.Text = "";
                         send(aes2, sb, Globals.clientStream);
                         Globals.Messages += ("Me: " + sb.ToString());
                         Messages.Text += ("Me: " + sb.ToString());
+                        
+                        
                     }
 
                 }
