@@ -38,5 +38,8 @@ namespace BSK
         public static Thread FileMessListener { get; set; }
         public static string Messages { get; set; }
         public static TextBox MessagesBox { get; set; }
+        public static bool is_transmision { get; set; }
+        public static double transmission_progress { get; set; }
+        public static ProgressBar progressbar { get; set; }
     }
 }

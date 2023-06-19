@@ -12,5 +12,6 @@
         <Button x:Name="SelectButton" Content="Select" Margin="400,286,75,80" Click="SelectButtonClick"/>
         <RadioButton x:Name="cbcMode" GroupName="Mode" Margin="248,158,172,203" IsChecked="True">CBC</RadioButton>
         <RadioButton x:Name="ecbMode" GroupName="Mode" Margin="341,158,75,203">ECB</RadioButton>
+        <ProgressBar x:Name="progress" Minimum="0" Maximum="100" Margin="148,370,123,5"/>
     </Grid>
 </UserControl>

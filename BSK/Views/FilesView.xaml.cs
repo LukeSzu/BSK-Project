@@ -32,8 +32,10 @@ namespace BSK.Views
         {
             try
             {
-                if (Globals.Connected && PathBox.Text != "")
+                if (Globals.Connected && PathBox.Text != "" && Globals.is_transmision == false)
                 {
+                    Globals.is_transmision = true;
+                    Globals.transmission_progress = 0.0;
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine("File");
                     bool mode = true;
@@ -73,55 +75,48 @@ namespace BSK.Views
 
                         
 
-                        int bufferSize = 1024;
-                        byte[] buffer = null;
+                        int bufferReadSize = 1024;
+                        byte[] bufferRead = null;
                         FileStream fs = new FileStream(PathBox.Text, FileMode.Open);
                         bool read = true;
-                        int bufferCount = Convert.ToInt32(Math.Ceiling((double)fs.Length / (double)bufferSize));
+                        int bufferCount = Convert.ToInt32(Math.Ceiling((double)fs.Length / (double)bufferReadSize));
 
-                        Globals.Client.SendTimeout = 600000;
-                        Globals.Client.ReceiveTimeout = 600000;
 
                         sb.AppendLine(fs.Length.ToString());
                         sb.AppendLine(System.IO.Path.GetFileName(PathBox.Text));
 
-                        PathBox.Text = sb.ToString();
-
                         send(aes1, sb, Globals.clientStream);
                         sb.Clear();
-                        Thread.Sleep(1000);
+                        Thread.Sleep(500);
 
-                        using (ICryptoTransform encryptor = aes2.CreateEncryptor(aes2.Key, aes2.IV))
+                        
+                        for (int i = 0; i < bufferCount; i++)
                         {
-                            using (var target = new MemoryStream())
+                            bufferRead = new byte[bufferReadSize];
+                            int size = fs.Read(bufferRead, 0, bufferReadSize);
+                            using (ICryptoTransform encryptor = aes2.CreateEncryptor(aes2.Key, aes2.IV))
                             {
-                                using (var cs = new CryptoStream(target, encryptor, CryptoStreamMode.Write))
+                                using (var target = new MemoryStream())
                                 {
-                                    for (int i = 0; i < bufferCount; i++)
+                                    using (var cs = new CryptoStream(target, encryptor, CryptoStreamMode.Write))
                                     {
-                                        buffer = new byte[bufferSize];
-                                        int size = fs.Read(buffer, 0, bufferSize);
-
-                                        cs.Write(buffer, 0, size);
-                                        cs.FlushFinalBlock();
-                                        byte[] message = target.ToArray();
-
-                                        Globals.Client.Client.Send(message, message.Length, SocketFlags.Partial);
+                                        using (var source = new StreamWriter(cs))
+                                        {
+                                            source.Write(Convert.ToBase64String(bufferRead));
+                                        }
+                                        if(Globals.clientStream.CanWrite)
+                                            Globals.clientStream.Write(target.ToArray(), 0, target.ToArray().Length);
                                     }
                                 }
-                            }
-                                    
-                        }
                             
+                            }
+                            //Globals.transmission_progress = (double)(((i + 1) / bufferCount)*100);
+                            //progress.Value = Globals.transmission_progress;
+                        }
+                        Globals.is_transmision = false;
+
 
                         fs.Close();
-
-                        //file
-                        //sb.AppendLine(MessageInput.Text);
-                        //MessageInput.Text = "";
-                        //send(aes2, sb, Globals.clientStream);
-                        //Globals.Messages += ("Me: " + sb.ToString());
-                        //Messages.Text += ("Me: " + sb.ToString());
                     }
                 }
             }

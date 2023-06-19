@@ -44,6 +44,7 @@ namespace BSK
             Globals.ConnectMenuButton.IsEnabled = false;
             Globals.FilesButton.IsEnabled = true;
             Globals.MessengerButton.IsEnabled = false;
+            Globals.is_transmision = false;
         }
         
 

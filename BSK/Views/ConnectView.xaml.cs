@@ -252,7 +252,8 @@ namespace BSK.Views
             {
                 if (ns.DataAvailable)
                 {
-                    byte[] readBuffer = new byte[1024];
+                    Globals.is_transmision = true;
+                    byte[] readBuffer = new byte[2048];
                     StringBuilder optionStrings = new StringBuilder();
                     int bytesRead = ns.Read(readBuffer, 0, readBuffer.Length);
                     ns.Flush();
@@ -344,34 +345,40 @@ namespace BSK.Views
                             string name = options[7];
 
 
-                            int bufferSize = 2048;
+                            int bufferSize = 1376;
                             byte[] buffer = null;
+
+                            int bufferSize2 = 1024;
                             int bufferCount = Convert.ToInt32(Math.Ceiling((double)filesize / (double)bufferSize));
                             FileStream fs = new FileStream("received/"+name, FileMode.OpenOrCreate);
 
-
                             using (ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
                             {
-                                using (var msDecrypt = new MemoryStream())
+                                while(filesize > 0)
                                 {
-                                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
+                                    buffer = new byte[bufferSize];
+                                    if (Globals.clientStream.CanRead)
                                     {
-                                        while (filesize > 0)
-                                        {
-                                            buffer = new byte[bufferSize];
+                                        int size = Globals.clientStream.Read(buffer, 0, bufferSize);
 
-                                            int size = Globals.clientStream.Socket.Receive(buffer, SocketFlags.Partial);
-                                            csDecrypt.Write(buffer, 0, size);
-                                            csDecrypt.FlushFinalBlock();
-                                            byte[] message = msDecrypt.ToArray();
-                                            fs.Write(message, 0, message.Length);
-                                            filesize -= message.Length;
+                                        using (var msDecrypt = new MemoryStream(buffer))
+                                        {
+                                            using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                                            {
+                                                using (var srDecrypt = new StreamReader(csDecrypt))
+                                                {
+                                                    byte[] buffer2 = Convert.FromBase64String(srDecrypt.ReadToEnd());
+                                                    fs.Write(buffer2, 0, buffer2.Length);
+                                                    filesize -= buffer2.Length;
+                                                }
+                                            }
                                         }
-                                        
                                     }
                                 }
+                                
                             }
                             fs.Close();
+                            Globals.is_transmision = false;
                         }
                     }
 
