@@ -78,8 +78,8 @@ namespace BSK.Views
                         sb.AppendLine(MessageInput.Text);
                         MessageInput.Text = "";
                         send(aes2, sb, Globals.clientStream);
-                        Globals.Messages += sb.ToString();
-                        Messages.Text += sb.ToString();
+                        Globals.Messages += ("Me: " + sb.ToString());
+                        Messages.Text += ("Me: " + sb.ToString());
                     }
 
                 }

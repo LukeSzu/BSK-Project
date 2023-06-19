@@ -313,8 +313,8 @@ namespace BSK.Views
 
                                         this.Dispatcher.Invoke(() =>
                                         {
-                                            Globals.MessagesBox.Text += (line[0] + '\n');
-                                            Globals.Messages += (line[0] + '\n');
+                                            Globals.MessagesBox.Text += ("Sb: " + line[0] + '\n');
+                                            Globals.Messages += ("Sb: " + line[0] + '\n');
                                         });
                                     }
                                 }
