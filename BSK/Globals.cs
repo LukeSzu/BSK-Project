@@ -35,5 +35,8 @@ namespace BSK
         public static RSACryptoServiceProvider Brsa { get; set; }
 
         public static byte[] sessionKey { get; set; }
+        public static Thread FileMessListener { get; set; }
+        public static string Messages { get; set; }
+        public static TextBox MessagesBox { get; set; }
     }
 }

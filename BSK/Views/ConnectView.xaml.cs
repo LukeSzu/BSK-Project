@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Security.Cryptography;
@@ -78,6 +79,7 @@ namespace BSK.Views
                             this.Dispatcher.Invoke(() =>
                             {
                                 Globals.DockPanel.Background = new SolidColorBrush(Colors.SeaGreen);
+                                Globals.MessengerButton.IsEnabled = true;
                             });
 
                             Globals.Tester = new Thread(TestConnection);
@@ -103,6 +105,10 @@ namespace BSK.Views
                             numberOfBytesRead = Globals.clientStream.Read(readBuffer, 0, readBuffer.Length);
                             var sessionKey = Globals.Rsa.Decrypt(readBuffer, false);
                             Globals.sessionKey = sessionKey;
+
+                            Globals.FileMessListener = new Thread(FileMessListen);
+                            Globals.FileMessListener.Start();
+
 
                         }
                     }
@@ -177,22 +183,11 @@ namespace BSK.Views
                 DisconnectButton.IsEnabled = false;
             }
         }
-        public static string GenerateToken()
+        public static byte[] GenerateKey()
         {
-            int length = 16;
-            const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            StringBuilder res = new StringBuilder();
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            using(Aes aes = Aes.Create())
             {
-                byte[] uintBuffer = new byte[sizeof(uint)];
-
-                while (length-- > 0)
-                {
-                    rng.GetBytes(uintBuffer);
-                    uint num = BitConverter.ToUInt32(uintBuffer, 0);
-                    res.Append(CHARS[(int)(num % (uint)CHARS.Length)]);
-                }
-                return res.ToString();
+                return aes.Key;
             }
         }
         public void ListenConnection()
@@ -211,6 +206,7 @@ namespace BSK.Views
                     string ip = Globals.Client.Client.RemoteEndPoint.ToString();
                     string pattern = @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
                     IPInput.Text = Regex.Match(ip, pattern).Value;
+                    Globals.MessengerButton.IsEnabled = true;
                 });
                 Globals.Connected = true;
                 Globals.Tester = new Thread(TestConnection);
@@ -231,14 +227,106 @@ namespace BSK.Views
 
                 //3
                 //Wygeneruj klucz sesji i go wyslij
-                Globals.sessionKey = Convert.FromBase64String(GenerateToken());
+                Globals.sessionKey = GenerateKey();
                 byte[] message = Globals.sessionKey;
                 var encryptedData = Globals.Brsa.Encrypt(message, false);
                 Globals.clientStream.Write(encryptedData, 0, encryptedData.Length);
+
+                Globals.FileMessListener = new Thread(FileMessListen);
+                Globals.FileMessListener.Start();
+
+                
             }
             catch (SocketException ex)
             {
+                
+            }
+        }
+        private void FileMessListen()
+        {
+            NetworkStream ns = Globals.clientStream;
+            while (Globals.Connected)
+            {
+                if (ns.DataAvailable)
+                {
+                    byte[] readBuffer = new byte[512];
+                    StringBuilder optionStrings = new StringBuilder();
+                    int bytesRead = ns.Read(readBuffer, 0, readBuffer.Length);
+                    ns.Flush();
+                    string[] options;
 
+                    using (Aes aes = Aes.Create())
+                    {
+                        aes.Key = Globals.sessionKey;
+                        aes.Mode = CipherMode.CBC;
+                        aes.BlockSize = 128;
+                        aes.IV = new byte[16] { 0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120 };
+                        aes.Padding = PaddingMode.PKCS7;
+
+                        using (ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
+                        {
+                            using (var msDecrypt = new MemoryStream(readBuffer, 0, bytesRead))
+                            {
+                                using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
+                                {
+                                    csDecrypt.Write(readBuffer, 0, bytesRead);
+                                    csDecrypt.FlushFinalBlock();
+                                    byte[] message = msDecrypt.ToArray();
+                                    optionStrings.AppendFormat("{0}", Encoding.ASCII.GetString(message, 0, message.Length));
+                                    options = optionStrings.ToString().Split("\r\n");
+                                }
+                            }
+                        }
+                    }
+                    if(options[0] == "Text")
+                    {
+                        using(Aes aes = Aes.Create())
+                        {
+                            if (options[1] == "cbc")
+                                aes.Mode = CipherMode.CBC;
+                            else if (options[1] == "ebc")
+                                aes.Mode = CipherMode.ECB;
+
+                            aes.BlockSize = int.Parse(options[2]);
+                            aes.Key = Convert.FromBase64String(options[3]);
+                            aes.IV = Convert.FromBase64String(options[4]);
+
+                            if (options[5] == "PKCS7")
+                                aes.Padding = PaddingMode.PKCS7;
+
+                            StringBuilder lines = new StringBuilder();
+                            bytesRead = ns.Read(readBuffer, 0, readBuffer.Length);
+                            ns.Flush();
+                            string[] line;
+
+                            using (ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
+                            {
+                                using (var msDecrypt = new MemoryStream(readBuffer, 0, bytesRead))
+                                {
+                                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
+                                    {
+                                        csDecrypt.Write(readBuffer, 0, bytesRead);
+                                        csDecrypt.FlushFinalBlock();
+                                        byte[] message = msDecrypt.ToArray();
+                                        lines.AppendFormat("{0}", Encoding.ASCII.GetString(message, 0, message.Length));
+                                        line = lines.ToString().Split("\r\n");
+
+                                        this.Dispatcher.Invoke(() =>
+                                        {
+                                            Globals.MessagesBox.Text += (line[0] + '\n');
+                                            Globals.Messages += (line[0] + '\n');
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if(options[0] == "File")
+                    {
+
+                    }
+
+                }
             }
         }
 
@@ -268,14 +356,15 @@ namespace BSK.Views
 
                             Globals.FilesButton.IsEnabled = false;
                             Globals.MessengerButton.IsEnabled = false;
+                            Globals.ConnectMenuButton.IsEnabled = true;
                         });
-                        
+
 
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    if(ex is ObjectDisposedException || ex is SocketException)
+                    if (ex is ObjectDisposedException || ex is SocketException)
                     {
                         this.Dispatcher.Invoke(() =>
                         {
@@ -292,10 +381,12 @@ namespace BSK.Views
 
                             Globals.FilesButton.IsEnabled = false;
                             Globals.MessengerButton.IsEnabled = false;
+                            Globals.ConnectMenuButton.IsEnabled = true;
                         });
                     }
-                    
-                } 
+
+                }
+                Thread.Sleep(1000);
             }
         }
     }

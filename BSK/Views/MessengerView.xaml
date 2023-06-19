@@ -6,7 +6,11 @@
              xmlns:local="clr-namespace:BSK.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="Yellow">
-            
+    <Grid>
+        <TextBox x:Name="Messages" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" Margin="34,21,34,168" IsReadOnly="True"></TextBox>
+        <TextBox x:Name="MessageInput" Margin="144,299,238,67"></TextBox>
+        <Button x:Name="SendButton" Content="Send" Margin="401,299,140,67" Click="SendButtonClick"/>
+        <RadioButton x:Name="cbcMode" GroupName="Mode" Margin="506,299,-79,-135" IsChecked="True">CBC</RadioButton>
+        <RadioButton x:Name="ecbMode" GroupName="Mode" Margin="506,329,-90,-127">ECB</RadioButton>
     </Grid>
 </UserControl>
