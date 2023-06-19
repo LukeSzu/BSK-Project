@@ -80,6 +80,7 @@ namespace BSK.Views
                             {
                                 Globals.DockPanel.Background = new SolidColorBrush(Colors.SeaGreen);
                                 Globals.MessengerButton.IsEnabled = true;
+                                Globals.FilesButton.IsEnabled = true;
                             });
 
                             Globals.Tester = new Thread(TestConnection);
@@ -195,6 +196,7 @@ namespace BSK.Views
             try
             {
                 Globals.Client = Globals.tcpListener.AcceptTcpClient();
+                
                 Globals.clientStream = Globals.Client.GetStream();
 
                 this.Dispatcher.Invoke(() =>
@@ -207,6 +209,7 @@ namespace BSK.Views
                     string pattern = @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b";
                     IPInput.Text = Regex.Match(ip, pattern).Value;
                     Globals.MessengerButton.IsEnabled = true;
+                    Globals.FilesButton.IsEnabled = true;
                 });
                 Globals.Connected = true;
                 Globals.Tester = new Thread(TestConnection);
@@ -249,7 +252,7 @@ namespace BSK.Views
             {
                 if (ns.DataAvailable)
                 {
-                    byte[] readBuffer = new byte[512];
+                    byte[] readBuffer = new byte[1024];
                     StringBuilder optionStrings = new StringBuilder();
                     int bytesRead = ns.Read(readBuffer, 0, readBuffer.Length);
                     ns.Flush();
@@ -323,7 +326,53 @@ namespace BSK.Views
                     }
                     else if(options[0] == "File")
                     {
+                        using (Aes aes = Aes.Create())
+                        {
+                            if (options[1] == "cbc")
+                                aes.Mode = CipherMode.CBC;
+                            else if (options[1] == "ebc")
+                                aes.Mode = CipherMode.ECB;
 
+                            aes.BlockSize = int.Parse(options[2]);
+                            aes.Key = Convert.FromBase64String(options[3]);
+                            aes.IV = Convert.FromBase64String(options[4]);
+
+                            if (options[5] == "PKCS7")
+                                aes.Padding = PaddingMode.PKCS7;
+
+                            long filesize = long.Parse(options[6]);
+                            string name = options[7];
+
+
+                            int bufferSize = 2048;
+                            byte[] buffer = null;
+                            int bufferCount = Convert.ToInt32(Math.Ceiling((double)filesize / (double)bufferSize));
+                            FileStream fs = new FileStream("received/"+name, FileMode.OpenOrCreate);
+
+
+                            using (ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
+                            {
+                                using (var msDecrypt = new MemoryStream())
+                                {
+                                    using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
+                                    {
+                                        while (filesize > 0)
+                                        {
+                                            buffer = new byte[bufferSize];
+
+                                            int size = Globals.clientStream.Socket.Receive(buffer, SocketFlags.Partial);
+                                            csDecrypt.Write(buffer, 0, size);
+                                            csDecrypt.FlushFinalBlock();
+                                            byte[] message = msDecrypt.ToArray();
+                                            fs.Write(message, 0, message.Length);
+                                            filesize -= message.Length;
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                            fs.Close();
+                        }
                     }
 
                 }

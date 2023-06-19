@@ -6,7 +6,11 @@
              xmlns:local="clr-namespace:BSK.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="White">
-            
+    <Grid>
+        <TextBox x:Name="PathBox" Margin="85,23,85,306" IsReadOnly="True"></TextBox>
+        <Button x:Name="SendButton" Content="Send" Margin="75,286,400,80" Click="SendButtonClick"/>
+        <Button x:Name="SelectButton" Content="Select" Margin="400,286,75,80" Click="SelectButtonClick"/>
+        <RadioButton x:Name="cbcMode" GroupName="Mode" Margin="248,158,172,203" IsChecked="True">CBC</RadioButton>
+        <RadioButton x:Name="ecbMode" GroupName="Mode" Margin="341,158,75,203">ECB</RadioButton>
     </Grid>
 </UserControl>

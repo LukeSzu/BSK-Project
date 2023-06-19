@@ -19,9 +19,6 @@ using System.Windows.Shapes;
 
 namespace BSK.Views
 {
-    /// <summary>
-    /// Interaction logic for MessengerView.xaml
-    /// </summary>
     public partial class MessengerView : UserControl
     {
         public MessengerView()
@@ -81,18 +78,12 @@ namespace BSK.Views
                         send(aes2, sb, Globals.clientStream);
                         Globals.Messages += ("Me: " + sb.ToString());
                         Messages.Text += ("Me: " + sb.ToString());
-                        
-                        
                     }
-
                 }
             }
             catch(Exception ex)
             {
-
             }
-            
-
         }
         private void send(Aes aes, StringBuilder sb, NetworkStream ns)
         {

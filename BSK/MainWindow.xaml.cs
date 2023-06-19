@@ -42,7 +42,7 @@ namespace BSK
             Globals.UnlockButton = MenuUnlockButton;
 
             Globals.ConnectMenuButton.IsEnabled = false;
-            Globals.FilesButton.IsEnabled = false;
+            Globals.FilesButton.IsEnabled = true;
             Globals.MessengerButton.IsEnabled = false;
         }
         
